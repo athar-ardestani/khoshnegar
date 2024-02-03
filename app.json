@@ -22,7 +22,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.athar95.khoshnegar"
+      "package": "com.athar95.khoshnegar",
+      "sdkVersion": "40.0.0" 
     },
     "web": {
       "favicon": "./assets/favicon.png"
