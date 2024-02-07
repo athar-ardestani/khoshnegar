@@ -32,7 +32,7 @@ function Login() {
       }
     } catch (error) {
       console.error('Error:', error);
-      Alert.alert('Error', 'مشکلی بوجود آمده!');
+      Alert.alert('Error', 'مشکلی بوجود آمده!', error);
 
     }
   };
