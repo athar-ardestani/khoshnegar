@@ -64,6 +64,7 @@ function Profile({ route }) {
     try {
       const url = 'http://65.109.192.77/curtain/api/logout/';
       const token = await retrieveAccessToken(); // retrieveAccessToken متدی است که توکن را بازیابی می‌کند
+      console.log(token);
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -77,8 +78,8 @@ function Profile({ route }) {
         })
       });
 
-      if (!response.ok) {
-        throw new Error('Something went wrong', response);
+      if (!response.status == 205) {
+        throw new Error('Something went wrong', response.statusText);
       }
 
       // Clear AsyncStorage
@@ -86,7 +87,7 @@ function Profile({ route }) {
       alert('Logout successful');
       Navigation.replace('Login');
     } catch (error) {
-      alert(error.message);
+      alert(error);
     }
   };
 
