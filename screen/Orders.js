@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image, StyleSheet, Text, TouchableOpacity, TouchableHighlight, View, ScrollView, ImageBackground } from "react-native";
 import { SimpleLineIcons, Ionicons, Feather, Octicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
@@ -32,11 +33,11 @@ function Orders() {
 
         if (!netInfoState.isConnected) {
           // اگر اتصال به اینترنت وجود نداشته باشد، عملیات بارگیری را انجام ندهید
-          return;
+          Navigation.replace('Login');
         }
 
         const token = await retrieveAccessToken();
-
+        console.log(token.access);
         if (token.access) {
           const response = await fetch('http://65.109.192.77/curtain/api/current-user/', {
             method: 'GET',
@@ -46,10 +47,9 @@ function Orders() {
               'Authorization': `Bearer ${token.access}`,
             },
           });
-          console.log(response.status);
+          console.log(!response.ok);
           if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.statrus}`);
-
+            throw new Error(`HTTP error! Status: ${response.status}`);
           }
 
           const data = await response.json();
@@ -66,7 +66,12 @@ function Orders() {
         }
 
       } catch (error) {
-
+        console.error(error);
+        if (error.message.includes('401')) {
+          // Clear AsyncStorage
+          await AsyncStorage.clear();
+          Navigation.replace('Login');
+        }
       } finally {
         setIsRequestSent(true); // تنظیم وضعیت ارسال به true بعد از اتمام درخواست
       }

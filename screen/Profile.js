@@ -7,6 +7,8 @@ import { AntDesign } from '@expo/vector-icons';
 import { saveAccessToken, retrieveAccessToken } from './../component/AccessTokenStorage';
 import { saveProfile, retrieveProfile } from './../component/ProfileStorage';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 function Profile({ route }) {
 
@@ -58,7 +60,35 @@ function Profile({ route }) {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      const url = 'http://65.109.192.77/curtain/api/logout/';
+      const token = await retrieveAccessToken(); // retrieveAccessToken متدی است که توکن را بازیابی می‌کند
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Accept: '*/*',
+          'Authorization': `Bearer ${token.access}`,
+          'Content-Type': 'application/json',
+          'X-CSRFTOKEN': 'kAMaHzkmkT3LJ6eZPx5CXx3KrXZ8fF0tdD0rzgfpG8iD02Js5Pldq7R4hbcQN4CT'
+        },
+        body: JSON.stringify({
+          refresh: `${token.refresh}`
+        })
+      });
 
+      if (!response.ok) {
+        throw new Error('Something went wrong', response);
+      }
+
+      // Clear AsyncStorage
+      await AsyncStorage.clear();
+      alert('Logout successful');
+      Navigation.replace('Login');
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
 
   const handleProfile = async () => {
@@ -124,6 +154,9 @@ function Profile({ route }) {
         {console.log(selectedCity)}<CityList onChangeText={setSelectedCity} placeholder="Select a city" initialSelectedCity={selectedCity} />
         <TouchableHighlight onPress={handleProfile}>
           <Text style={styles.SendButton}>ویرایش</Text>
+        </TouchableHighlight>
+        <TouchableHighlight onPress={handleLogout}>
+          <Text style={styles.Button}>خروج</Text>
         </TouchableHighlight>
       </ImageBackground>
     </View>
@@ -196,6 +229,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#04480f',
     borderRadius: 5,
   },
+  Button: {
+    padding: 10,
+    margin: 15,
+    width: 300,
+    height: 40,
+    color: 'white',
+    fontSize: 17,
+    textAlign: 'center',
+    backgroundColor: '#d42b29',
+    borderRadius: 5,
+  }
 });
 
 export default Profile;

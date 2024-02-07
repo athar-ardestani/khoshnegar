@@ -39,7 +39,7 @@ const Notification = ({ route }) => {
         fetchData();
 
         // تنظیم interval برای به‌روزرسانی در فواصل زمانی
-        const intervalId = setInterval(fetchData, 5000); // هر 5 ثانیه
+        const intervalId = setInterval(fetchData, 60000); // هر 5 ثانیه
 
         // توقف interval در هنگام از بین رفتن کامپوننت
         return () => clearInterval(intervalId);

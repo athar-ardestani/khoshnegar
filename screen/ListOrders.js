@@ -2,15 +2,20 @@ import React, { useEffect, useState } from 'react';
 import DataAndTime from '../component/DataAndTime';
 import { useNavigation } from '@react-navigation/native';
 import { Image, StyleSheet, Text, TouchableOpacity, TouchableHighlight, View, ScrollView, TextInput, ImageBackground, Divider } from "react-native";
-import { Ionicons, AntDesign } from '@expo/vector-icons';
+import { saveAccessToken, retrieveAccessToken } from './../component/AccessTokenStorage'; // مسیر فایل AuthService.js
+import { Ionicons, AntDesign, Entypo } from '@expo/vector-icons';
 import { saveProfile, retrieveProfile } from './../component/ProfileStorage';
+import PopupMenu from 'react-native-popup-menu';
 import { StatusBar } from 'expo-status-bar';
+import SimpleMenu from '../component/dotsMenu';
+
 
 
 const ListOrders = () => {
     const Navigation = useNavigation();
     const [ProfileData, setProfileData] = useState(null);
     const [fullName, setFullName] = useState('');
+    const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -20,11 +25,43 @@ const ListOrders = () => {
             if (profile) {
                 setFullName(profile.fullname);
             }
+
+            try {
+                const token = await retrieveAccessToken();
+                const apiUrl = 'http://65.109.192.77/curtain/api/orders/?order_by=create_date&order_type=ascending';
+
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token.access}`,
+                    },
+                    body: '',
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                // اینجا می‌توانید لیست را چک کنید و کارهای مورد نیاز را انجام دهید
+                console.log('لیست سفارشات:', data[0]);
+                setOrders(data);
+
+
+                // اگر وضعیت سفارش Open باشد، کارهای مورد نیاز را انجام دهید
+
+
+            } catch (error) {
+                console.error('خطا در درخواست:', error.message);
+            }
         };
 
 
         fetchData();
     }, []); // برای اجرا یک‌بار در هنگام لود صفحه
+
+
 
     return (
         <View style={styles.container}>
@@ -59,17 +96,31 @@ const ListOrders = () => {
 
 
 
-                    <View>
-
-                    </View>
-
-
-
 
 
 
 
                 </View>
+
+                <ScrollView style={styles.scrollOrdder}>
+                    <View  >
+                        {orders.map((order, index) => (
+                            <View style={styles.OrderContainer} >
+                                <TouchableOpacity style={styles.orderItem} key={index}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <SimpleMenu style={styles.OrderSimpleMenu} />
+                                        <View style={styles.OrderContent}>
+                                            <Text style={styles.textbox}>با کد : {order.order_code}</Text>
+                                            <Text style={styles.textbox}>به نام : {order.fullname}</Text>
+                                            <Text style={styles.textbox}>نوع سفارش : {order.order_status}</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                </ScrollView>
+
             </ImageBackground>
         </View>
     )
@@ -80,12 +131,10 @@ export default ListOrders
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-
         margin: 0,
         padding: 0,
         width: '100%',
         height: '100%',
-
     },
     dateTimeText: {
         color: 'black',
@@ -139,6 +188,39 @@ const styles = StyleSheet.create({
         width: 35,
         height: 35,
         resizeMode: 'contain',
+    },
+
+
+
+
+    scrollOrdder: {
+        height: '85%',
+    },
+    rowContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderBottomWidth: 1,
+        borderTopColor: 'silver',
+        borderBottomColor: 'silver',
+        borderWidth: 2,
+        borderBottomColor: '#ccc',
+    },
+    OrderSimpleMenu: {
+        marginRight: 20,
+
+
+    },
+    OrderContent: {
+        flex: 1,
+    },
+    orderItem: {
+        flex: 1,
+    },
+    textbox: {
+        fontSize: 16,
+        marginBottom: 5,
     },
 
 })
