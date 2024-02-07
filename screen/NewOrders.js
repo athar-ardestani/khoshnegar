@@ -152,38 +152,36 @@ function NewOrders({ route }) {
 
 
         const requestData = {
-            "order_code": `${OrderCode}`,
+            "order_code": OrderCode,
             "product_id": ID,
             "file_id": "",
-            "code": `${ProductCode}`,
-            "width": parseInt(ProductWidth),
-            "height": parseInt(ProductHeight),
-            "count": parseInt(ProductCount),
-            "chain_direction": `${Chain}`,
-            "chain_direction_2nd": `${Chain2}`,
-            "holder_type": `${Bast}`,
-            "lifting_system": `${UpSystem}`,
-            "net_code": `${parseInt(Codetor)}`,
-            "lining_code": `${parseInt(CodeAstar)}`,
-            "cloth_type": `${ClothType}`,
-            "cloth_type_2nd": `${ClothType2}`,
-            "view_type": `${Did}`,
-            "printing_type": `${Chap}`,
-            "printing_type_2nd": `${Chap2}`,
-            "left_lot_count": `${parseInt(LeftGavare)}`,
-            "right_lot_count": `${parseInt(RightGavare)}`,
-            "same_sum_for_lots": `${parseInt(SumTwoGavare)}`,
-            "velvet_cloth_type": `${VolvetCloth}`,
-            "white_top_padding": `${parseInt(WhiteForUp)}`,
-            "white_down_padding": `${parseInt(WhiteForDown)}`,
-            "paper_type": `${PaperType}`,
-            "thread_baton_direction": `${ThreadBatonDirection}`,
-            "slot_size": `${SlotSize}`,
+            "code": isNaN(ProductCode) ? 0 : ProductCode,
+            "width": isNaN(ProductWidth) ? 0 : parseInt(ProductWidth),
+            "height": isNaN(ProductHeight) ? 0 : parseInt(ProductHeight),
+            "count": isNaN(ProductCount) ? 1 : parseInt(ProductCount),
+            "chain_direction": Chain === undefined ? '' : Chain,
+            "chain_direction_2nd": Chain2 === undefined ? '' : Chain2,
+            "holder_type": Bast === undefined ? '' : Bast,
+            "lifting_system": UpSystem === undefined ? '' : UpSystem,
+            "net_code": isNaN(Codetor) ? 0 : parseInt(Codetor),
+            "lining_code": isNaN(CodeAstar) ? 0 : parseInt(CodeAstar),
+            "cloth_type": ClothType === undefined ? '' : ClothType,
+            "cloth_type_2nd": ClothType2 === undefined ? '' : ClothType2,
+            "view_type": Did === undefined ? '' : Did,
+            "printing_type": Chap === undefined ? '' : Chap,
+            "printing_type_2nd": Chap2 === undefined ? '' : Chap2,
+            "left_lot_count": isNaN(LeftGavare) ? 0 : parseInt(LeftGavare),
+            "right_lot_count": isNaN(RightGavare) ? 0 : parseInt(RightGavare),
+            "same_sum_for_lots": isNaN(SumTwoGavare) ? 0 : parseInt(SumTwoGavare),
+            "velvet_cloth_type": VolvetCloth === undefined ? '' : VolvetCloth,
+            "white_top_padding": isNaN(WhiteForUp) ? 0 : parseInt(WhiteForUp),
+            "white_down_padding": isNaN(WhiteForDown) ? 0 : parseInt(WhiteForDown),
+            "paper_type": PaperType === undefined ? '' : PaperType,
+            "thread_baton_direction": ThreadBatonDirection === undefined ? '' : ThreadBatonDirection,
+            "slot_size": SlotSize === undefined ? '' : SlotSize,
             "label": "",
-            "description": `${ProductMultiline}`
+            "description": isNaN(ProductMultiline) ? '' : ProductMultiline
         };
-
-
 
         console.log(requestData);
         try {
@@ -223,9 +221,8 @@ function NewOrders({ route }) {
 
                     const data = await response.json();
 
-                    setproductList(data.product_orders);
+                    setproductList(data[0].product_orders);
                     console.log(data); // Handle the response data as needed
-                    window.location.reload();
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 }

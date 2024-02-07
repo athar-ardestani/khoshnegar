@@ -95,24 +95,34 @@ const ListOrders = () => {
                     </View>
 
 
-
-
-
-
-
                 </View>
 
                 <ScrollView style={styles.scrollOrdder}>
                     <View  >
-                        {orders.map((order, index) => (
-                            <View style={styles.OrderContainer} >
-                                <TouchableOpacity style={styles.orderItem} key={index}>
+                        {orders.filter(order => order.order_status !== 'open').map((order, index) => (
+                            <View style={[styles.rowContainer, {
+                                backgroundColor: order.order_status === 'returned' ? '#f7e8c2' : order.order_status === 'canceled' ? '#f3c6c4'
+                                    : order.order_status === 'approved' ? '#d3f7c2' : order.order_status === 'posted' ? '#c8d9e1' :
+                                        order.order_status === 'delivered' ? '#7493f9' : order.order_status === 'registered' ? 'white' : ''
+                            }]} key={index}>
+                                <TouchableOpacity style={{
+                                    flex: 1,
+                                }} >
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <SimpleMenu style={styles.OrderSimpleMenu} />
                                         <View style={styles.OrderContent}>
                                             <Text style={styles.textbox}>با کد : {order.order_code}</Text>
                                             <Text style={styles.textbox}>به نام : {order.fullname}</Text>
-                                            <Text style={styles.textbox}>نوع سفارش : {order.order_status}</Text>
+                                            <Text style={[styles.textboxStatus, {
+                                                color: order.order_status === 'returned' ? '#dc4621' :
+                                                    order.order_status === 'canceled' ? '#d82423' : order.order_status === 'approved' ? '#3a8e12' :
+                                                        order.order_status === 'registered' ? '#377217' : order.order_status === 'posted' ? '#3f84ac' :
+                                                            order.order_status === 'delivered' ? '#1a5592' : ''
+                                            }]}>
+                                                {order.order_status === 'returned' ? 'مرجوع شده' :
+                                                    order.order_status === 'canceled' ? 'لغو شده' : order.order_status === 'approved' ? ' تایید شده در انتظار ارسال' :
+                                                        order.order_status === 'registered' ? 'ثبت شده' : order.order_status === 'posted' ? 'ارسال شده در انتظار تحویل' :
+                                                            order.order_status === 'delivered' ? 'تحویل شده' : ''}</Text>
                                         </View>
                                     </View>
                                 </TouchableOpacity>
@@ -197,30 +207,31 @@ const styles = StyleSheet.create({
         height: '85%',
     },
     rowContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 10,
         paddingVertical: 5,
         borderBottomWidth: 1,
         borderTopColor: 'silver',
         borderBottomColor: 'silver',
-        borderWidth: 2,
+        borderWidth: 1,
         borderBottomColor: '#ccc',
+        opacity: 0.7,
     },
     OrderSimpleMenu: {
-        marginRight: 20,
-
-
+        backgroundColor: 'red',
+        width: '50%',
+        paddingLeft: 10,
     },
     OrderContent: {
         flex: 1,
-    },
-    orderItem: {
-        flex: 1,
+
     },
     textbox: {
         fontSize: 16,
         marginBottom: 5,
+        paddingRight: 10,
     },
+    textboxStatus: {
+        fontSize: 18,
+        paddingRight: 10,
+    }
 
 })
